@@ -1,7 +1,7 @@
 package com.generic.core.base.config;
 
-import com.generic.core.base.exceptions.RestErrorException;
-import com.generic.core.logging.interceptors.ClientInterceptor;
+import com.generic.core.base.exceptions.handler.RestErrorExceptionHandler;
+import com.generic.logger.interceptors.ClientInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
@@ -28,9 +28,8 @@ public class RestTemplateConfig {
                 new SimpleClientHttpRequestFactory( ) );
 
         RestTemplate restTemplate = new RestTemplate( factory );
-        restTemplate.setErrorHandler( new RestErrorException( ) );
+        restTemplate.setErrorHandler( new RestErrorExceptionHandler( ) );
         restTemplate.setInterceptors( Collections.singletonList( new ClientInterceptor( ) ) );
         return restTemplate;
     }
-
 }

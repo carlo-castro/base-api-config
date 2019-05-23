@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
  * Auto-configures the health and info endpoint back to the application port for the monitoring
  * systems
  */
-@RestController
 @Configuration
+@RestController
 public class MonitoringConfig {
 
     /**
@@ -37,7 +37,7 @@ public class MonitoringConfig {
      * @param statusMapper   the status mapper
      * @param infoEndpoint   the info endpoint
      */
-    MonitoringConfig( HealthEndpoint healthEndpoint, HealthStatusHttpMapper statusMapper, InfoEndpoint infoEndpoint) {
+    MonitoringConfig( HealthEndpoint healthEndpoint, HealthStatusHttpMapper statusMapper, InfoEndpoint infoEndpoint ) {
         this.healthEndpoint = healthEndpoint;
         this.statusMapper = statusMapper;
         this.infoEndpoint = infoEndpoint;
@@ -48,10 +48,10 @@ public class MonitoringConfig {
      *
      * @return the health
      */
-    @GetMapping("/health")
-    public ResponseEntity getHealth() {
-        Health health = healthEndpoint.health();
-        return ResponseEntity.status(statusMapper.mapStatus(health.getStatus())).body(health);
+    @GetMapping( "/health" )
+    public ResponseEntity getHealth( ) {
+        Health health = healthEndpoint.health( );
+        return ResponseEntity.status( statusMapper.mapStatus( health.getStatus( ) ) ).body( health );
     }
 
     /**
@@ -59,8 +59,9 @@ public class MonitoringConfig {
      *
      * @return the info
      */
-    @GetMapping("/info")
-    public ResponseEntity getInfo() {
-        return ResponseEntity.ok(infoEndpoint.info());
+    @GetMapping( "/info" )
+    public ResponseEntity getInfo( ) {
+        return ResponseEntity.ok( infoEndpoint.info( ) );
     }
+
 }

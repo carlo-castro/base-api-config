@@ -2,12 +2,11 @@ package com.generic.core.base.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import com.generic.core.base.constants.ErrorCode;
-import com.generic.core.base.util.MapperUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.generic.core.base.constants.ErrorCode.getErrorMessage;
+import static com.generic.utils.MapperUtil.objectToJson;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 /**
@@ -33,24 +32,39 @@ public class EndpointResult< T > {
      * @param data the data
      */
     public EndpointResult( T data ) {
-        setOk( );
-        addData( data );
+        setOk( ).addData( data );
     }
 
-    private void setOk( ) {
+    private EndpointResult setOk( ) {
         responseCode = "0";
         setResponseMessage( responseCode );
+        return this;
     }
 
     /**
      * Add error.
      *
      * @param responseCode the response code
+     * @return the endpoint result
      */
-    public void addError( String responseCode, String... error) {
+    public EndpointResult addError( String responseCode ) {
+        this.responseCode = responseCode;
+        this.setResponseMessage( responseCode );
+        return this;
+    }
+
+    /**
+     * Add error.
+     *
+     * @param responseCode the response code
+     * @param params       the params
+     * @return the endpoint result
+     */
+    public EndpointResult addError( String responseCode, String... params ) {
         this.responseCode = responseCode;
         setResponseMessage( responseCode );
-        String.format(this.responseMessage,error);
+        this.responseMessage = String.format( this.responseMessage, ( Object[] ) params );
+        return this;
     }
 
     /**
@@ -59,7 +73,7 @@ public class EndpointResult< T > {
      * @param responseCode the response code
      */
     private void setResponseMessage( String responseCode ) {
-        this.responseMessage = ErrorCode.getErrorMessage( responseCode );
+        this.responseMessage = getErrorMessage( responseCode );
     }
 
     /**
@@ -92,24 +106,28 @@ public class EndpointResult< T > {
      *
      * @param key   the key
      * @param value the value
+     * @return the endpoint result
      */
     @JsonIgnore
-    public void addData( String key, Object value ) {
+    public EndpointResult addData( String key, Object value ) {
         if ( value != null ) {
             Map< String, Object > map = new HashMap< String, Object >( );
             map.put( key, value );
             data = ( T ) map;
         }
+        return this;
     }
 
     /**
      * Add data.
      *
      * @param data the data
+     * @return the endpoint result
      */
     @JsonIgnore
-    public void addData( T data ) {
+    public EndpointResult addData( T data ) {
         this.data = data;
+        return this;
     }
 
     /**
@@ -120,7 +138,7 @@ public class EndpointResult< T > {
      */
     @JsonIgnore
     public String toJsonString( boolean isDataOnly ) {
-        return MapperUtil.objectToJson( isDataOnly ? data : this );
+        return objectToJson( isDataOnly ? data : this );
     }
 
 }

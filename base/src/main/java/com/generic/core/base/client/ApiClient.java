@@ -14,7 +14,6 @@ import java.util.Map;
  * The type Api client.
  */
 public class ApiClient {
-
     private static RestTemplate restTemplate;
 
     /**
@@ -33,7 +32,7 @@ public class ApiClient {
      * @param params the params
      * @return the endpoint result
      */
-    public static EndpointResult postForObject(String url, Map< String, Object > params ) {
+    public static EndpointResult postForObject( String url, Map< String, Object > params ) {
 
         HttpHeaders headers = new HttpHeaders( );
         headers.setContentType( MediaType.APPLICATION_JSON_UTF8 );
@@ -93,5 +92,4 @@ public class ApiClient {
         return MapUtils.isEmpty( params ) ? restTemplate.getForObject( url, clazz ) :
                 restTemplate.getForObject( url, clazz, params );
     }
-
 }

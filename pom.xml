@@ -17,6 +17,8 @@
     </parent>
     <modules>
         <module>base</module>
+        <module>logger</module>
+        <module>utils</module>
         <module>notification-model</module>
     </modules>
 </project>
