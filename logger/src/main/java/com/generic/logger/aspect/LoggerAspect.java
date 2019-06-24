@@ -14,9 +14,16 @@ import com.generic.logger.request.LogRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import static com.generic.utils.MapperUtil.objectToJson;
+import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static com.generic.logger.config.LoggerConfig.STATUS;
+import static org.springframework.http.HttpStatus.OK;
+import static com.generic.logger.client.LoggerApiClient.sendLog;
+import static com.generic.utils.MapperUtil.objectToJson;
 
 /**
  * The type Logging aspect.
@@ -38,7 +45,12 @@ public class LoggerAspect {
         HttpServletRequest request = ( ( ServletRequestAttributes ) RequestContextHolder
                 .currentRequestAttributes( ) ).getRequest( );
 
+        Instant start = Instant.now( );
+
         Object responseObj = joinPoint.proceed( );
+
+        Long duration = Duration.between( start, Instant.now( ) ).toMillis( );
+
         String respMsg;
         if ( responseObj instanceof ResponseEntity ) {
             ResponseEntity entity = ( ResponseEntity ) responseObj;
@@ -50,7 +62,7 @@ public class LoggerAspect {
         String uri = request.getRequestURI( );
         String method = request.getMethod( );
 
-        LogRequest logRequest = new LogRequest( reqMsg, respMsg, uri, method, "200" );
+        LogRequest logRequest = new LogRequest( reqMsg, respMsg, uri, method, valueOf( OK.value( ) ), duration );
 
         if ( STATUS ) log( logRequest );
 
@@ -67,7 +79,7 @@ public class LoggerAspect {
      */
     @Async
     public void log( LogRequest logRequest ) {
-        LoggerApiClient.sendLog( logRequest );
+        sendLog( logRequest );
     }
 
 }

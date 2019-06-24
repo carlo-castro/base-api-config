@@ -2,6 +2,7 @@ package com.generic.logger.interceptors;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -9,6 +10,8 @@ import org.springframework.scheduling.annotation.Async;
 import com.generic.logger.request.LogRequest;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +33,14 @@ public class ClientInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept( HttpRequest request, byte[] body,
                                          ClientHttpRequestExecution execution ) throws IOException {
+        Instant start = Instant.now( );
         ClientHttpResponse response = execution.execute( request, body );
-
+        Long duration = Duration.between( start, Instant.now( ) ).toMillis( );
         String responseBody;
-
+        String responseCode = "";
         try {
+            HttpStatus statusCode = response.getStatusCode();
+            responseCode = valueOf( statusCode.value() );
             responseBody = new String( copyToByteArray( response.getBody( ) ) );
         } catch ( IOException ex ) {
             log.debug( "Error in getting the response body" );
@@ -65,7 +71,7 @@ public class ClientInterceptor implements ClientHttpRequestInterceptor {
         }
 
         LogRequest logRequest = new LogRequest( !isEmpty( requestMsg ) ? requestMsg : "{}", responseBody,
-                request.getURI( ).getPath( ), request.getMethodValue( ), valueOf( response.getRawStatusCode( ) ) );
+                request.getURI( ).getPath( ), request.getMethodValue( ), responseCode, duration );
 
         if ( STATUS ) log( logRequest );
 

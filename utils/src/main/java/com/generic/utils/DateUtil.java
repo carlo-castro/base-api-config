@@ -2,11 +2,14 @@ package com.generic.utils;
 
 import lombok.extern.log4j.Log4j2;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -259,6 +262,16 @@ public class DateUtil {
      */
     public static LocalDate getPrevLocalDate( LocalDate localDate, Integer monthsToSubtract ) {
         return localDate.minusMonths( monthsToSubtract );
+    }
+
+    public static final Timestamp getCurrentUtcTimestamp() {
+        return new Timestamp(ZonedDateTime.now(ZoneOffset.UTC).toEpochSecond() * 1000);
+    }
+
+    public static final Timestamp getCurrentTimestamp() {
+        Date dateNow = new Date();
+        Timestamp timeStampDate = new Timestamp(dateNow.getTime());
+        return timeStampDate;
     }
 
 }

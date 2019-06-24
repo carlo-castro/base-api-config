@@ -130,6 +130,11 @@ public class MapperUtil {
         return objectMapper.convertValue( object, clazz );
     }
 
+    public static Map<String, String> objectToMap(Object object) {
+        String objectString = objectToJson( object );
+        return jsonToObject( objectString, Map.class );
+    }
+
     public static String maskPropertyValue( String msg ) {
         if ( msg.equals( "{}" ) || !msg.contains( "{" ) || !msg.contains( "}" ) )
             return msg;

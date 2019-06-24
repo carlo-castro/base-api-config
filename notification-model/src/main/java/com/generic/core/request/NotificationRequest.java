@@ -10,9 +10,9 @@ import java.util.Map;
  */
 @Data
 public class NotificationRequest {
-
     //  TODO: may change to int
     private String type;
+    private Integer notifType;
     private Map< String, String > params = new HashMap<>( );
     private String to;
 

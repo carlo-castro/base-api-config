@@ -1,7 +1,10 @@
 package com.generic.core.base.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.generic.core.base.constants.ErrorCode;
 import lombok.Data;
+
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +19,6 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
  */
 @Data
 public class EndpointResult< T > {
-
     private String responseMessage;
     private String responseCode;
     private T data;
@@ -35,7 +37,7 @@ public class EndpointResult< T > {
         setOk( ).addData( data );
     }
 
-    private EndpointResult setOk( ) {
+    private EndpointResult< T > setOk( ) {
         responseCode = "0";
         setResponseMessage( responseCode );
         return this;
@@ -47,9 +49,9 @@ public class EndpointResult< T > {
      * @param responseCode the response code
      * @return the endpoint result
      */
-    public EndpointResult addError( String responseCode ) {
-        this.responseCode = responseCode;
-        this.setResponseMessage( responseCode );
+    @Deprecated
+    public EndpointResult< T > addError( String responseCode ) {
+        setResponseCodeMessage( responseCode );
         return this;
     }
 
@@ -60,10 +62,10 @@ public class EndpointResult< T > {
      * @param params       the params
      * @return the endpoint result
      */
-    public EndpointResult addError( String responseCode, String... params ) {
-        this.responseCode = responseCode;
-        setResponseMessage( responseCode );
-        this.responseMessage = String.format( this.responseMessage, ( Object[] ) params );
+    @Deprecated
+    public EndpointResult< T > addError( String responseCode, String... params ) {
+        setResponseCodeMessage( responseCode );
+        this.responseMessage = MessageFormat.format( this.responseMessage, ( Object[] ) params );
         return this;
     }
 
@@ -71,9 +73,13 @@ public class EndpointResult< T > {
      * Sets response message.
      *
      * @param responseCode the response code
+     * @param params       the params
+     * @return the response message
      */
-    private void setResponseMessage( String responseCode ) {
-        this.responseMessage = getErrorMessage( responseCode );
+    public EndpointResult< T > setResponseCodeMessage( String responseCode, String... params ) {
+        setResponseCodeMessage( responseCode );
+        this.responseMessage = MessageFormat.format( this.responseMessage, ( Object[] ) params );
+        return this;
     }
 
     /**
@@ -109,7 +115,7 @@ public class EndpointResult< T > {
      * @return the endpoint result
      */
     @JsonIgnore
-    public EndpointResult addData( String key, Object value ) {
+    public EndpointResult< T > addData( String key, Object value ) {
         if ( value != null ) {
             Map< String, Object > map = new HashMap< String, Object >( );
             map.put( key, value );
@@ -125,7 +131,7 @@ public class EndpointResult< T > {
      * @return the endpoint result
      */
     @JsonIgnore
-    public EndpointResult addData( T data ) {
+    public EndpointResult< T > addData( T data ) {
         this.data = data;
         return this;
     }
@@ -139,6 +145,33 @@ public class EndpointResult< T > {
     @JsonIgnore
     public String toJsonString( boolean isDataOnly ) {
         return objectToJson( isDataOnly ? data : this );
+    }
+
+    /**
+     * Sets response code message.
+     *
+     * @param responseCode the response code
+     * @return the response code message
+     */
+    public EndpointResult< T > setResponseCodeMessage( String responseCode ) {
+        this.responseCode = responseCode;
+        this.responseMessage = ErrorCode.getErrorMessage( responseCode );
+        return this;
+    }
+
+    public EndpointResult setResponseMessage( String responseMessage ) {
+        this.responseMessage = responseMessage;
+        return  this;
+    }
+
+    public EndpointResult setResponseCode( String responseCode ) {
+        this.responseCode = responseCode;
+        return this;
+    }
+
+    public EndpointResult setData( T data ) {
+        this.data = data;
+        return this;
     }
 
 }

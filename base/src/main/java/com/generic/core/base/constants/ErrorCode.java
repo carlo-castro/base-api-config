@@ -17,16 +17,8 @@ import java.util.Map;
 @ConfigurationProperties( prefix = "constants.code" )
 public class ErrorCode {
 
-    private Map< String, String > error = new HashMap<>( );
     private static Map< String, String > errorStatic = new HashMap<>( );
-
-    /**
-     * Init.
-     */
-    @PostConstruct
-    public void init( ) {
-        errorStatic.putAll( error );
-    }
+    private Map< String, String > error = new HashMap<>( );
 
     /**
      * Gets error message.
@@ -36,6 +28,14 @@ public class ErrorCode {
      */
     public static String getErrorMessage( String errorCode ) {
         return errorStatic.get( errorCode );
+    }
+
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init( ) {
+        errorStatic.putAll( error );
     }
 
 }
