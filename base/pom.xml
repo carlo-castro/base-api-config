@@ -87,6 +87,14 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
+<!--        &lt;!&ndash;date parser&ndash;&gt;-->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.github.sisyphsu/dateparser &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.github.sisyphsu</groupId>-->
+<!--            <artifactId>dateparser</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
 </project>

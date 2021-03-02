@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.MapUtils;
@@ -130,7 +131,7 @@ public class MapperUtil {
         return objectMapper.convertValue( object, clazz );
     }
 
-    public static Map<String, String> objectToMap(Object object) {
+    public static Map<String, Object> objectToMap(Object object) {
         String objectString = objectToJson( object );
         return jsonToObject( objectString, Map.class );
     }
@@ -169,4 +170,14 @@ public class MapperUtil {
         return getMapValue( jsonToObject( msg, String.class ) );
     }
 
+    public static Map<String, Object> objectToMapFormat(Object obj, PropertyNamingStrategy name){
+        try {
+            objectMapper.setPropertyNamingStrategy(name);
+            return objectToMap(obj);
+        } catch (Exception var6) {
+            log.debug("Error in Parsing the JSON");
+            log.error("e: ", var6);
+        }
+        return null;
+    }
 }

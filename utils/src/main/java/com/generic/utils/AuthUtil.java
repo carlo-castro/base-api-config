@@ -25,8 +25,8 @@ public class AuthUtil {
         PublicKey key = null;
         try {
             if ( StringUtils.isNotEmpty( filePath ) ) {
-                key = RSAUtil.getPublicKey( filePath );
-                result = RSAUtil.encrypt( password, key );
+                key = EncryptDecryptUtil.getPublicKey( filePath );
+                result = EncryptDecryptUtil.encryptUsingRSA( password, key );
             }
         } catch ( IOException e ) {
             log.debug( "Error with encrypting with the password" );

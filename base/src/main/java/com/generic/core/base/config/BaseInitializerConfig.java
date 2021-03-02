@@ -19,6 +19,8 @@ import javax.annotation.Resource;
  */
 @Configuration
 @EnableConfigurationProperties
+//@EnableEurekaClient
+//@EnableFeignClients(basePackages = {"com.generic.core.base.client"})
 @Import( { ErrorCode.class, RestTemplateConfig.class, LoggerConfig.class,
         SwaggerConfig.class, MonitoringConfig.class } )
 public class BaseInitializerConfig {
