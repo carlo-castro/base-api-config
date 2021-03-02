@@ -9,12 +9,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.generic.utils.MapperUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelUtil {
+
+//    public void main(){
+//        Map<String,String> headersToPropertyMap = new HashMap<String,String>();
+//        //The header column name in excel-First, the property you wish to assign the value-firstName
+//        headersToPropertyMap.put("First", "firstName");
+//        headersToPropertyMap.put("Last", "lastName");
+//        headersToPropertyMap.put("Email", "email");
+//        headersToPropertyMap.put("orgNodeId", "companyname");
+//        headersToPropertyMap.put("Company Name", "companynameString");
+//        headersToPropertyMap.put("EULA", "eula");
+//        headersToPropertyMap.put("Email Notification", "emailNotification");
+//        System.out.println("Object: "+ MapperUtil.objectToJson(ExcelUtil.read("path to excel file",Map.class,headersToPropertyMap));
+//    }
 
     public static <T>  List<T> read(String filePath,Class<T> objClass, Map<String,String> headersToPropertyMap){
         try {
