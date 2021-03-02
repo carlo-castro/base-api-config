@@ -10,9 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 import static java.time.ZoneId.systemDefault;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -22,23 +20,38 @@ import static java.time.format.DateTimeFormatter.ofPattern;
  */
 @Log4j2
 public class DateUtil {
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
-    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-
+    private static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private final static String DEFAULT_SYSTEM_DATE_FORMAT = "yyyy-MM-dd";
     private final static DateTimeFormatter DEFAULT_DTF = DateTimeFormatter.ofPattern(DEFAULT_SYSTEM_DATE_FORMAT);
 
-    private static final String[] formats = {
-            "yyyy-MM-dd'T'HH:mm:ss'Z'",   "yyyy-MM-dd'T'HH:mm:ssZ",
-            "yyyy-MM-dd'T'HH:mm:ss",      "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd HH:mm:ss",
-            "MM/dd/yyyy HH:mm:ss",        "MM/dd/yyyy'T'HH:mm:ss.SSS'Z'",
-            "MM/dd/yyyy'T'HH:mm:ss.SSSZ", "MM/dd/yyyy'T'HH:mm:ss.SSS",
-            "MM/dd/yyyy'T'HH:mm:ssZ",     "MM/dd/yyyy'T'HH:mm:ss",
-            "yyyy:MM:dd HH:mm:ss",        "yyyyMMdd",
-            "yyyy-MM-dd",                 "yyyy/MM/dd",
-            "yyyy:MM:dd", };
-
+    private static final Map<String, String> DATE_FORMAT_REGEXPS = new HashMap<String, String>() {
+        {
+            put("^\\d{8}$", "yyyyMMdd");
+            put("^\\d{12}$", "yyyyMMddHHmm");
+            put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
+            put("^\\d{14}$", "yyyyMMddHHmmss");
+            put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
+            put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
+            put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
+            put("^\\d{1,2}/\\d{1,2}/\\d{4}$", "MM/dd/yyyy");
+            put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
+            put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}$", "dd MMM yyyy");
+            put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}$", "dd MMMM yyyy");
+            put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "dd-MM-yyyy HH:mm");
+            put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
+            put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
+            put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
+            put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
+            put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
+            put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd-MM-yyyy HH:mm:ss");
+            put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
+            put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
+            put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
+            put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
+            put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
+            put("^\\d{4}-\\d{1,2}-\\d{1,2}T\\d{1,2}:\\d{2}:\\d{2}\\.\\d{2}[-+]\\d{2}:\\d{2}$", "yyyy-MM-dd'T'HH:mm:ss.SSS");
+        }
+    };
 
     /**
      * TODO TIMESTAMP return
@@ -146,8 +159,8 @@ public class DateUtil {
      * @return the string
      */
     public static String formatDateToDefaultDateTime(Date date, boolean withTime) {
-        final DateFormat dateFormat = withTime ? new SimpleDateFormat(DATE_TIME_PATTERN) :
-                new SimpleDateFormat(DATE_PATTERN);
+        final DateFormat dateFormat = withTime ? new SimpleDateFormat(DEFAULT_DATE_TIME_PATTERN) :
+                new SimpleDateFormat(DEFAULT_SYSTEM_DATE_FORMAT);
         return dateFormat.format(date);
     }
 
@@ -385,19 +398,18 @@ public class DateUtil {
         }
         return true;
     }
-    public static String getFormat(String date) {
-        if (StringUtils.isNotEmpty(date)) {
-            for (String parse : formats) {
-                SimpleDateFormat sdf = new SimpleDateFormat(parse);
-                try {
-                    sdf.parse(date);
-                    log.info("Date Format is: " + parse);
-                    return parse;
-                } catch (ParseException e) {
 
-                }
+    /**
+     * To Determine the pattern by the string date value
+     *
+     * @param dateString
+     * @return The matching SimpleDateFormat pattern, or null if format is unknown.
+     */
+    public static String getDateFormat(String dateString) {
+        for (String regexp : DATE_FORMAT_REGEXPS.keySet()) {
+            if (dateString.matches(regexp) || dateString.toLowerCase().matches(regexp)) {
+                return DATE_FORMAT_REGEXPS.get(regexp);
             }
-            log.error("Invalid Date Format");
         }
         return null;
     }
