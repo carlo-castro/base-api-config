@@ -1,6 +1,7 @@
 package com.generic.core.base.data;
 
 import lombok.Data;
+import org.apache.poi.ss.formula.functions.T;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -44,5 +46,15 @@ public class BaseEntity implements Serializable {
     @UpdateTimestamp
     @Column( updatable = false )
     protected LocalDateTime createdTime;
+
+    public void updateEntity(T tmpEntity) throws IllegalAccessException {
+        Field fields[] = this.getClass().getDeclaredFields();
+
+        for (Field f : fields) {
+            if (f.get(tmpEntity) != null) {
+                f.set(this, f.get(tmpEntity));
+            }
+        }
+    }
 
 }
