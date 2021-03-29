@@ -2,6 +2,8 @@ package com.generic.core.base.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.generic.core.base.constants.ErrorCode;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 
 import java.text.MessageFormat;
@@ -22,6 +24,10 @@ public class EndpointResult< T > {
     private String responseMessage;
     private String responseCode;
     private T data;
+    @JsonIgnore
+    private List dataList = new ArrayList();
+    @JsonIgnore
+    private Map< String, Object > dataMap = new HashMap< String, Object >( );
 
     /**
      * Instantiates a new Endpoint result.
@@ -123,7 +129,34 @@ public class EndpointResult< T > {
         }
         return this;
     }
+    /**
+     * Add data.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the endpoint result
+     */
+    @JsonIgnore
+    public EndpointResult< T > addDataMap( String key, Object value ) {
+        if ( value != null ) {
+            dataMap.put( key, value );
+            this.data = ( T ) dataMap;
+        }
+        return this;
+    }
 
+    /**
+     * Add data.
+     *
+     * @param data the data
+     * @return the endpoint result
+     */
+    @JsonIgnore
+    public EndpointResult< T > addDataList( T data ) {
+        dataList.add(data);
+        this.data = (T) dataList;
+        return this;
+    }
     /**
      * Add data.
      *
