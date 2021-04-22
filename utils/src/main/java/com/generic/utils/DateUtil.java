@@ -49,7 +49,8 @@ public class DateUtil {
             put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
             put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
             put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
-            put("^\\d{4}-\\d{1,2}-\\d{1,2}T\\d{1,2}:\\d{2}:\\d{2}\\.\\d{2}[-+]\\d{2}:\\d{2}$", "yyyy-MM-dd'T'HH:mm:ss.SSS");
+            put("^\\d{4}-\\d{1,2}-\\d{1,2}T\\d{1,2}:\\d{2}:\\d{2}\\.\\d{2}[-+]\\d{2}:\\d{2}$", "yyyy-MM-dd'T'HH:mm:ss.SS");
+            put("^\\d{4}-\\d{1,2}-\\d{1,2}T\\d{1,2}:\\d{2}:\\d{2}\\.\\d{2}[-+]\\d{2}:\\d{2}$", "yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
         }
     };
 
@@ -160,7 +161,7 @@ public class DateUtil {
      */
     public static String formatDateToDefaultDateTime(Date date, boolean withTime) {
         final DateFormat dateFormat = withTime ? new SimpleDateFormat(DEFAULT_DATE_TIME_PATTERN) :
-                new SimpleDateFormat(DEFAULT_SYSTEM_DATE_FORMAT);
+            new SimpleDateFormat(DEFAULT_SYSTEM_DATE_FORMAT);
         return dateFormat.format(date);
     }
 
@@ -351,6 +352,12 @@ public class DateUtil {
     public static LocalDateTime getTimeStamp() {
         return LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
+    public static LocalDateTime getLocalDateTimeNow() {
+        return LocalDateTime.now();
+    }
+    public static String getLocalDateTimeNow(String format) {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(format));
+    }
 
 
     /**
@@ -413,4 +420,8 @@ public class DateUtil {
         }
         return null;
     }
+
+
 }
+
+

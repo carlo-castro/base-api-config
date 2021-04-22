@@ -20,7 +20,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Data
 @MappedSuperclass
-public class BaseEntity implements Serializable {
+public class BaseEntity<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
